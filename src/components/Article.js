@@ -32,8 +32,8 @@ class Article extends PureComponent{
     }
     render(){
         const handleClick = this.handleClick;       // додано щоб усунути помилку Line 21: 'handleCLick' is not defined no-undef
-        const {article} = this.props // якщо функція тоді це аргументи а якщо клас тоді в this.props
-        const body = this.state.isOpen && <section className="card-text">{article.text}</section> // якщо є поточний стан тоді покажемо секцію
+        const {article} = this.props 															  // це виходить масив з якого можна щось витягувати якщо функція тоді це аргументи а якщо клас тоді в this.props 
+        const body = this.state.isOpen && <section className="card-text">{article.text}</section> //  це виходить новий тег {body}, якщо є поточний стан тоді покажемо секцію
         return(
             <div className="card mx-auto" style={{width:'50%'}}>
                 <div className="card-header">

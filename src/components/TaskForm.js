@@ -1,18 +1,29 @@
 import React, {Component} from 'react';
-import FormTask from './FormTask';
 import 'bootstrap/dist/css/bootstrap.css'
+import SubTaskAdd from './SubTaskAdd';
 
-
+class newTask {
+  constructor(props) {
+    this.name = props.name || 'Some name';
+    this.subTask = props.subTask || [];
+  }
+} 
+// Інший спосіб створити обєкт
+function newTask1(props) {
+    this.name = props.name || 'Some name';
+    this.subTask = props.subTask || [];
+} 
 class TaskForm extends React.Component {
 
-
-    constructor() {
-      super();
+    constructor(props) {
+      super(props);
       this.state = {
+        taskList: [],
         name: '',
-        shareholders: [{ task: '', name:''  }],
         TaskMin: '',
       };
+      this.input = React.createRef();
+      this.handleSubTaskSubmit = this.handleSubTaskSubmit.bind(this);
     }
     
     handleNameChange = (event) => {
@@ -30,10 +41,17 @@ class TaskForm extends React.Component {
     }
     
     handleSubmit = (event) => {
-      const { name, shareholders, task } = this.state;
       event.preventDefault();
-      
-      alert(`Завдання: ${name} , складові ${shareholders.length} , ${task}`);
+      const { name, taskList } = this.state;
+      const task = new newTask({
+        name: name
+      });
+      taskList.push(task);
+      this.input.current.value = '';
+      this.setState({
+        name: '',
+        taskList: taskList
+      })
     }
     
     handleAddShareholder = () => {
@@ -43,40 +61,52 @@ class TaskForm extends React.Component {
     handleRemoveShareholder = (idx) => () => {
       this.setState({ shareholders: this.state.shareholders.filter((s, sidx) => idx !== sidx) });
     }
-    
+    handleSubTaskSubmit(data) {
+      console.log(data)
+      const {taskId, subName} = data;
+      const {taskList} = this.state;
+      taskList[taskId].subTask.push({subName: subName});
+      console.log(taskList);
+      this.setState({taskList:taskList});
+    }
     render() {    
+      const {taskList} = this.state;
       return (
-        <form onSubmit={this.handleSubmit}>
-          <h4>Назва завдання</h4>
-          <input required
-            type="text"
-            name="MaxTask"
-            tabindex="1"
-            placeholder="Купити продукти, зремонтувати телевізор і т.д."
-            value={this.state.name}
-            onChange={this.handleNameChange}
-          />
-        
+        <div>
+          <form onSubmit={this.handleSubmit}>
+            <h4>Назва завдання</h4>
+            <input required
+              type="text"
+              name="taskName"
+              tabIndex="1"
+              placeholder="Task name"
+              ref={this.input}
+              onChange={this.handleNameChange}
+            />
+            <button>Save</button>
+          </form>
           <h4>Складові завдання</h4>
         
-          {this.state.shareholders.map((shareholder, idx) => (
-            <div className="shareholder">
-              <input
+          {taskList.map((task, idx) => (
+            <div key={idx} className="shareholder">
+              <h4>{task.name}</h4>
+              <ul>
+              <li><SubTaskAdd taskId={idx} btnLable="Save" onSubmit={this.handleSubTaskSubmit}/></li>
+                {task.subTask.map((sub, i) => (<li key={i}>{sub.subName}</li>))}
+              </ul>
+              {/* <input
                 type="text"
                 name="MinTask"
-                tabindex="2"
                 placeholder={`Завдання #${idx + 1}`}
                 value={shareholder.name}
                 onChange={this.handleShareholderNameChange(idx)}
               />
-              <button type="button" tabindex="20" onClick={this.handleAddShareholder} className="small">Додати завдання</button>
-              <button type="button" tabindex="30" onClick={this.handleRemoveShareholder(idx)} className="small">Видалити завдання</button>
+              <button type="button" tabIndex="20" onClick={this.handleAddShareholder} className="small">Додати завдання</button>
+              <button type="button" tabIndex="30" onClick={this.handleRemoveShareholder(idx)} className="small">Видалити завдання</button> */}
             </div>
           ))}
-          
-          <button tabindex="50" onClick={this.handleCLick}>Внести</button>
-        </form>
         
+        </div>
       )
       
     }

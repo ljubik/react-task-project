@@ -35,7 +35,6 @@ class FormTask extends Component {
            </form> */}
         <TaskForm />
         </div>
-        <h2><task /></h2>
        </div> 
     );
   }
